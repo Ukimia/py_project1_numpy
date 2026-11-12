@@ -1,0 +1,21 @@
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# Large model weights
+weights/*.npz
+
+# Reference outputs
+assets/reference_outputs.npz
+
+# Generated outputs
+output_tokens.npz
+my_tokens.npz
+
+# Editor settings
+.vscode/
