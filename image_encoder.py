@@ -87,8 +87,11 @@ class TransformerBlock:
         # TODO-04b: MLP = GELU(u @ W1.T + b1) @ W2.T + b2.
         # hidden: [B,N,3072], mlp_update: [B,N,768] for the image tower.
         # Return residual + mlp_update. Both residual paths retain [B,N,D].
-        raise NotImplementedError('TODO-04b: MLP and the second residual')
-
+        ##raise NotImplementedError('TODO-04b: MLP and the second residual')
+        hidden = u @ self.fc1_weight.T + self.fc1_bias
+        activated = self.gelu(hidden)
+        mlp_update = activated @ self.fc2_weight.T + self.fc2_bias
+        return residual + mlp_update
 
 class ImageEncoder:
     def __init__(self, weights):
@@ -120,14 +123,17 @@ class ImageEncoder:
         patches = self.patchify(images)  # [B,49,3072]
 
         # TODO-05a: project patches to [B,49,768]. There is no patch bias.
-        raise NotImplementedError('TODO-05a: apply the supplied patch projection')
-
+       ##raise NotImplementedError('TODO-05a: apply the supplied patch projection')
+        x=patches@self.patch_weight.t
         # Given: one supplied CLS row per image.
         cls = np.tile(self.cls, (images.shape[0], 1, 1))
 
         # TODO-05b: prepend CLS on the token axis, then add learned positions.
         # Return [B,50,768]. self.position broadcasts over B.
-        raise NotImplementedError('TODO-05b: CLS, patch rows and positions')
+       ##raise NotImplementedError('TODO-05b: CLS, patch rows and positions')
+        x = np.concatenate([cls, x], axis=1)
+        x = x + self.position
+        return x
 
     def encode_tokens(self, images):
         """Provided assembly of token input and the 12 blocks; [B,50,768]."""
@@ -143,6 +149,9 @@ class ImageEncoder:
         # Select CLS, apply post_norm, and project with self.projection.
         # [B,50,768] -> [B,768] -> [B,512]. visual.proj is already [in,out].
         # Name the projected array output. The final unit-vector helper is given.
-        raise NotImplementedError('TODO-06: CLS selection, post-Norm and projection')
-
+        ##raise NotImplementedError('TODO-06: CLS selection, post-Norm and projection')
+        cls = tokens[:, 0, :]
+    
+        cls = self.post_norm(cls)
+        output = cls @ self.projection
         return unit_vector(output)
