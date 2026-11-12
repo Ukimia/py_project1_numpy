@@ -113,7 +113,9 @@ class ImageEncoder:
         """
         # TODO-01: separate patch-grid axes; reorder; flatten.
         # Input [B,3,224,224], return [B,49,3072].
-        ##raise NotImplementedError('TODO-01: turn each image into 49 patch rows')
+        ##raise NotImplementedError('TODO-01: turn each image into 49 patch rows')4
+
+        B = images.shape[0]
         B=images.reshape(B,3,7,32,7,32)
                        ##0,1,2,3,4,5
         x=x.transpose(0,2,4,1,3,5)
@@ -124,7 +126,7 @@ class ImageEncoder:
 
         # TODO-05a: project patches to [B,49,768]. There is no patch bias.
        ##raise NotImplementedError('TODO-05a: apply the supplied patch projection')
-        x=patches@self.patch_weight.t
+        x=patches@self.patch_weight.T
         # Given: one supplied CLS row per image.
         cls = np.tile(self.cls, (images.shape[0], 1, 1))
 
@@ -148,6 +150,7 @@ class ImageEncoder:
 
         # Select CLS, apply post_norm, and project with self.projection.
         # [B,50,768] -> [B,768] -> [B,512]. visual.proj is already [in,out].
+  
         # Name the projected array output. The final unit-vector helper is given.
         ##raise NotImplementedError('TODO-06: CLS selection, post-Norm and projection')
         cls = tokens[:, 0, :]
