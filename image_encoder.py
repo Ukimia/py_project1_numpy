@@ -42,7 +42,7 @@ class MultiHeadAttention:
         # q,k,v: [B,H,N,64]. scores must have [B,H,N,N].
         ##raise NotImplementedError('TODO-03a: calculate scores from q and k')
         scores=q@k.swapaxes(-1,-2)
-        scores=scores/np.sqrt(self.head_dim)
+        scores=scores/np.sqrt(np.float32(self.head_dim))
 
         # Given for later text-encoder compatibility. Images use causal=False.
         if causal:
@@ -116,8 +116,7 @@ class ImageEncoder:
         ##raise NotImplementedError('TODO-01: turn each image into 49 patch rows')4
 
         B = images.shape[0]
-        B=images.reshape(B,3,7,32,7,32)
-                       ##0,1,2,3,4,5
+        x = images.reshape(B, 3, 7, 32, 7, 32)
         x=x.transpose(0,2,4,1,3,5)
         x=x.reshape(B,49,3072)
         return x
