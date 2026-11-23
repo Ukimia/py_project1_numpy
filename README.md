@@ -1,4 +1,42 @@
-# Project 1: reproduce the final project's image encoder
+# Project 1 · NumPy 图像编码器
+
+本项目使用 NumPy 实现 OpenCLIP ViT-B-32 图像编码器的前向计算。输入是预处理后的 RGB 图像数组，形状为 [B, 3, 224, 224]。输出形状为 [B, 512]，每张图像对应一个归一化的 512 维特征向量。模型参数由课程提供。
+
+## 代码结构
+
+| 文件 | 功能 |
+| --- | --- |
+| image_encoder.py | 实现图像分块、图像嵌入、多头注意力、Transformer 块和特征输出。 |
+| preprocess_image.py | 调整图像尺寸、中心裁剪并归一化像素。 |
+| helpers.py | 提供层归一化、GELU、注意力权重和向量归一化函数。 |
+| runtime.py、config.json | 加载图像和权重，记录模型配置。 |
+| check.py | 将各阶段的计算结果与课程参考结果进行比较。 |
+| run.py | 执行编码并保存图片 ID 和对应的特征向量。 |
+| requirements.txt | 列出项目依赖。 |
+
+## 如何运行
+
+使用 Python 3.9 或更新版本，在项目根目录安装依赖：
+
+~~~shell
+python -m pip install -r requirements.txt
+~~~
+
+从课程发布的原始作业附件获取以下数据，按原目录结构放入项目：
+
+- **weights/image_encoder.npz**：图像编码器的模型权重，运行编码和检查都需要。
+- **assets/reference_outputs.npz**：课程参考结果，仅用于数值检查。
+
+然后运行：
+
+~~~shell
+python check.py --stage all
+python run.py --output output_tokens.npz
+~~~
+
+本次实验的 8 项检查均通过。第二条命令默认处理课程提供的 10 张图片，并生成 output_tokens.npz，特征数组形状为 (10, 512)。
+
+## 课程原始说明
 
 Given images and learned model parameters **theta**, implement the OpenCLIP
 ViT-B-32 **forward calculation in NumPy**. Your output must numerically match
